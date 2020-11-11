@@ -20,7 +20,7 @@ namespace RecipeApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddCosmosRepository(Configuration, config =>
+            services.AddCosmosRepository(config =>
             {
                 config.CosmosConnectionString = Configuration.GetConnectionString("RecipesConnectionString");
                 config.DatabaseId = "RecipeDatabase";

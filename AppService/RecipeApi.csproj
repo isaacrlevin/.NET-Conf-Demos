@@ -16,8 +16,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="IEvangelist.Azure.CosmosRepository" Version="2.0.2" />
-		<PackageReference Include="Microsoft.Azure.Cosmos" Version="3.14.0" />
+		<PackageReference Include="IEvangelist.Azure.CosmosRepository" Version="2.1.0" />
+		<PackageReference Include="Microsoft.Azure.Cosmos" Version="3.15.1-preview" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
 	</ItemGroup>
 

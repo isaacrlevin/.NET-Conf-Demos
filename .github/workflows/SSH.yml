@@ -3,13 +3,18 @@ on:
   push:
     branches:
     - main
-    paths:
-    - 'AdvancedActions/**'
-    - '.github/workflows/SSH.yml'
+
+env:
+  AZURE_WEBAPP_NAME: AdvancedActions
+  AZURE_WEBAPP_PACKAGE_PATH: AdvancedActions/publish
+  AZURE_WEBAPP_PUBLISH_PROFILE: ${{ secrets.AdvancedActions_aa9e }}
+  CONFIGURATION: Release
+  DOTNET_CORE_VERSION: 6.0.x
+  WORKING_DIRECTORY: AdvancedActions
 
 jobs:
   BuildTest:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     environment:
         name: Test
         url: ${{ steps.deploy_staging.outputs.webapp-url }}

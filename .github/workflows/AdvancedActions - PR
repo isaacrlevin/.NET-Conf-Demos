@@ -17,12 +17,6 @@ jobs:
   CreateEnvironment:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1.8.0
-      with:
-        include-prerelease: True
-        dotnet-version: ${{ env.DOTNET_CORE_VERSION }}
     - name: Azure Login
       uses: azure/login@v1
       with:
@@ -31,9 +25,13 @@ jobs:
       working-directory: src
       run: |
         az account set --subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-        az webapp deployment slot create --name AdvancedActions --resource-group .NETConf --slot "pr-${{ github.event.number }}"
-        slot=$(az webapp deployment list-publishing-profiles --name AdvancedActions --resource-group .NETConf --subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }} --slot 'pr-${{ github.event.number }}' --xml --output tsv)
-        echo "SLOTNAME=$slot" >> $GITHUB_ENV
+
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1.8.0
+      with:
+        include-prerelease: True
+        dotnet-version: ${{ env.DOTNET_CORE_VERSION }}
     - name: Restore
       run: dotnet restore "${{ env.WORKING_DIRECTORY }}"
     - name: Build

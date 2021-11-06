@@ -5,7 +5,7 @@ on:
     - main
     paths:
     - 'AdvancedActions/**'
-env:
+    - '.github/workflows/SSH.yml'
 
 jobs:
   BuildTest:

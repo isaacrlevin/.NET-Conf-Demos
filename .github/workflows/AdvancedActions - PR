@@ -2,7 +2,7 @@ name: Build and deploy .NET Core app to Windows WebApp AdvancedActions
 on:
   pull_request:
     branches:
-    - main
+      - main
 
 env:
   AZURE_WEBAPP_NAME: AdvancedActions

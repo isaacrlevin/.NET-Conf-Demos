@@ -5,7 +5,7 @@ on:
     - main
     paths:
     - 'AdvancedActions/**'
-
+    - '.github/workflows/AdvancedActions - PR.yml'
 env:
   AZURE_WEBAPP_NAME: AdvancedActions
   AZURE_WEBAPP_PACKAGE_PATH: AdvancedActions\publish

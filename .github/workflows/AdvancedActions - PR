@@ -13,7 +13,7 @@ env:
   DOTNET_CORE_VERSION: 6.0.x
   WORKING_DIRECTORY: AdvancedActions
 jobs:
-  build-and-deploy:
+  Create Environment:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2

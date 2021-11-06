@@ -1,4 +1,4 @@
-name: Build and deploy .NET Core application to Web App RecipeApi-levin with API Management Service RecipeApiapi-RecipeApi
+name: Build and deploy .RecipeApi-levin with API Management Service
 on:
   push:
     branches:

@@ -1,4 +1,4 @@
-name: Deploy Function App (.NET Core) to isaac-dotnet-conf-function
+name: Deploy Function App to isaac-dotnet-conf-function
 on:
   push:
     branches:

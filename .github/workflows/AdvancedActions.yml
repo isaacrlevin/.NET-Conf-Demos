@@ -4,7 +4,7 @@ on:
     branches:
     - main
     paths:
-    - 'AdvancedActions/**'
+    - 'AdvancedActions\**'
 env:
   AZURE_WEBAPP_NAME: AdvancedActions
   AZURE_WEBAPP_PACKAGE_PATH: AdvancedActions/publish
@@ -14,7 +14,7 @@ env:
   WORKING_DIRECTORY: AdvancedActions
 jobs:
   BuildTest:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     environment:
         name: Test
         url: ${{ steps.deploy_staging.outputs.webapp-url }}

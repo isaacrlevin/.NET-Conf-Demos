@@ -4,7 +4,7 @@ on:
     branches:
     - main
     paths:
-    - 'AdvancedActions\**'
+    - 'AdvancedActions/**'
 
 env:
   AZURE_WEBAPP_NAME: AdvancedActions

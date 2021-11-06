@@ -4,8 +4,8 @@ on:
     branches:
     - main
     paths:
-    - 'AdvancedActions\**'
-    - '.github\workdlows\SSH.yml'
+    - 'AdvancedActions/**'
+    - '.github/workflows/SSH.yml'
 
 env:
   AZURE_WEBAPP_NAME: AdvancedActions

@@ -3,8 +3,6 @@ on:
   pull_request:
     branches:
     - main
-    paths:
-    - 'AdvancedActions/**'
 
 env:
   AZURE_WEBAPP_NAME: AdvancedActions

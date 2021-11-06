@@ -5,9 +5,10 @@ on:
     - main
     paths:
     - 'AdvancedActions\**'
+
 env:
   AZURE_WEBAPP_NAME: AdvancedActions
-  AZURE_WEBAPP_PACKAGE_PATH: AdvancedActions/publish
+  AZURE_WEBAPP_PACKAGE_PATH: AdvancedActions\publish
   AZURE_WEBAPP_PUBLISH_PROFILE: ${{ secrets.AdvancedActions_aa9e }}
   CONFIGURATION: Release
   DOTNET_CORE_VERSION: 6.0.x

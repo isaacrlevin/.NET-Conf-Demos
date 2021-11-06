@@ -3,6 +3,8 @@ on:
   push:
     branches:
     - main
+    paths:
+    - 'AzureFunction/**'
 env:
   AZURE_FUNCTIONAPP_NAME: isaac-dotnet-conf-function
   AZURE_FUNCTIONAPP_PACKAGE_PATH: ./published

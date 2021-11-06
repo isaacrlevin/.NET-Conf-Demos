@@ -4,12 +4,12 @@ on:
     branches:
     - main
     paths:
-    - 'AdvancedActions/**'
-    - '.github/workflows/SSH.yml'
+    - 'AdvancedActions\**'
+    - '.github\workflows\SSH.yml'
 
 jobs:
   BuildTest:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     environment:
         name: Test
         url: ${{ steps.deploy_staging.outputs.webapp-url }}

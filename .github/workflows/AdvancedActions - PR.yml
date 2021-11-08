@@ -24,7 +24,7 @@ jobs:
     - name: Copy Built Files, Create PR Slot and Get Publish Profile
       working-directory: src
       run: |
-        az account set --subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        az version
 
     - uses: actions/checkout@v2
     - name: Setup .NET Core

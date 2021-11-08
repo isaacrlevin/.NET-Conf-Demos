@@ -23,8 +23,10 @@ jobs:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
     - name: Copy Built Files, Create PR Slot and Get Publish Profile
       run: |
-        az version
-
+        az account set -s ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        az webapp deployment slot create --name AdvancedActions --resource-group .NETConf --slot "pr-${{ github.event.number }}"
+        slot=$(az webapp deployment list-publishing-profiles --name AdvancedActions --resource-group .NETConf --subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }} --slot 'pr-${{ github.event.number }}' --xml --output tsv)
+        echo "SLOTNAME=$slot" >> $GITHUB_ENV
     - uses: actions/checkout@v2
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1.8.0
@@ -44,8 +46,8 @@ jobs:
       with:
         app-name: ${{ env.AZURE_WEBAPP_NAME }}
         package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
-        publish-profile: ${{ env.AZURE_WEBAPP_PUBLISH_PROFILE }}
-        # slot-name: 'pr-${{ github.event.number }}'
+        publish-profile: ${{ env.SLOT_NAME }}
+        slot-name: 'pr-${{ github.event.number }}'
 
   Deploy_Prod:
     needs: CreateStagingEnvironment

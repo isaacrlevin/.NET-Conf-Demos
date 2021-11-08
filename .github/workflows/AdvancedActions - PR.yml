@@ -39,7 +39,7 @@ jobs:
     - name: Test
       run: dotnet test
     - name: Publish
-      run: dotnet publish "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} --no-build --self-contained true --output "${{ env.AZURE_WEBAPP_PACKAGE_PATH }}"
+      run: dotnet publish "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} -r linux-x64 --self-contained true --output "${{ env.AZURE_WEBAPP_PACKAGE_PATH }}"
     - name: 'Run Azure webapp deploy action using publish profile credentials'
       uses: azure/webapps-deploy@v2
       with:
@@ -68,10 +68,14 @@ jobs:
     - name: Test
       run: dotnet test
     - name: Publish
-      run: dotnet publish "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} --no-build --self-contained true --output "${{ env.AZURE_WEBAPP_PACKAGE_PATH }}"
+      run: dotnet publish "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} -r linux-x64 --self-contained true --output "${{ env.AZURE_WEBAPP_PACKAGE_PATH }}"
     - name: 'Run Azure webapp deploy action using publish profile credentials'
       uses: azure/webapps-deploy@v2
       with:
         app-name: ${{ env.AZURE_WEBAPP_NAME }}
         package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
         publish-profile: ${{ env.AZURE_WEBAPP_PUBLISH_PROFILE }}
+    - name: Delete PR Slot
+      run: |
+        az account set -s ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        az webapp deployment slot delete --name AdvancedActions --resource-group .NETConf --slot "pr-${{ github.event.number }}"

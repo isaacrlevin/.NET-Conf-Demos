@@ -17,14 +17,14 @@ jobs:
   CreateStagingEnvironment:
     runs-on: ubuntu-latest
     steps:
-    - name: Azure Login
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
-    - name: Copy Built Files, Create PR Slot and Get Publish Profile
-      working-directory: src
-      run: |
-        az account set --subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+    # - name: Azure Login
+    #   uses: azure/login@v1
+    #   with:
+    #     creds: ${{ secrets.AZURE_CREDENTIALS }}
+    # - name: Copy Built Files, Create PR Slot and Get Publish Profile
+    #   working-directory: src
+    #   run: |
+    #     az account set --subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
     - uses: actions/checkout@v2
     - name: Setup .NET Core
@@ -47,3 +47,13 @@ jobs:
         package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
         publish-profile: ${{ env.AZURE_WEBAPP_PUBLISH_PROFILE }}
         slot-name: 'pr-${{ github.event.number }}'
+
+  DeployProd:
+    needs: CreateStagingEnvironment:
+    environment:
+      name: Deploy_Containers
+      url: ${{ steps.deploy_staging.outputs.webapp-url }}
+    name: Deploy Prod
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2

@@ -1,15 +1,58 @@
 ﻿@page "/"
+@using AdvancedActions.Data
+@using Newtonsoft.Json
+@using System.Text
+<PageTitle>.NET Community Heros</PageTitle>
 
-<PageTitle>Index</PageTitle>
+<h1>.NET Community Heros!</h1>
+<center>
+  <div id="content">
+@if (photos != null && photos.Length > 0)
+{
+    @foreach (Photo url in photos)
+    {
+        <div>
+            <a href="@url.Url">
+                <img src="@url.Url" style="height:400px" />
+            </a>
+            <div class="desc">@url.Name</div>
+        </div>
 
-<h1>Hello, world!</h1>
+    }
+}
+</div>
+</center>
+@code {
+    private Photo[]? photos;
 
-Welcome to your new app.
+    protected override async Task OnInitializedAsync()
+    {
+        string json = await ReadTextAsync("beans.json");
+        photos = JsonConvert.DeserializeObject<Photo[]>(json);
+    }
 
-<SurveyPrompt Title="How is Blazor working for you?" />
-fsd
-fsdfsd
-fdsfsdfds
- fd dsfsd
- fdsf ds
-fds fds f
+    public Task<string> ReadTextAsync(string filePath)
+    {
+        var task = new Task<string>(() =>
+        {
+            using (FileStream sourceStream = new FileStream(filePath,
+    FileMode.Open, FileAccess.Read, FileShare.Read,
+    bufferSize: 4096, useAsync: true))
+            {
+                StringBuilder sb = new StringBuilder();
+
+                byte[] buffer = new byte[0x1000];
+                int numRead;
+                while ((numRead = sourceStream.Read(buffer, 0, buffer.Length)) != 0)
+                {
+                    string text = Encoding.ASCII.GetString(buffer, 0, numRead);
+                    sb.Append(text);
+                }
+
+                return sb.ToString();
+            }
+        });
+        task.Start();
+        return task;
+    }
+}

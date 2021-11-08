@@ -1,4 +1,4 @@
-name: Deploy Function App (.NET Core) to isaac-dotnet-conf-function
+name: Deploy Function App to isaac-dotnet-conf-function
 on:
   push:
     branches:
@@ -13,7 +13,7 @@ env:
   DOTNET_CORE_VERSION: 3.1.x
   PROJECT_PATH: AzureFunction
 jobs:
-  build-and-deploy:
+  BuildDeployFunction:
     runs-on: windows-latest
     steps:
     - name: Checkout GitHub Action

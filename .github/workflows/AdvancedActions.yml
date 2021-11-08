@@ -1,23 +1,18 @@
-name: Build and deploy .NET Core app to Windows WebApp AdvancedActions
+name: Build and deploy to AdvancedActions
 on:
-  push:
-    branches:
-    - main
-    paths:
-    - 'AdvancedActions\**'
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron:  '00 5 1 * *'
 env:
   AZURE_WEBAPP_NAME: AdvancedActions
-  AZURE_WEBAPP_PACKAGE_PATH: AdvancedActions\publish
+  AZURE_WEBAPP_PACKAGE_PATH: AdvancedActions/publish
   AZURE_WEBAPP_PUBLISH_PROFILE: ${{ secrets.AdvancedActions_aa9e }}
   CONFIGURATION: Release
   DOTNET_CORE_VERSION: 6.0.x
   WORKING_DIRECTORY: AdvancedActions
 jobs:
-  BuildTest:
+  BuildTestDeployAdvancedActions:
     runs-on: ubuntu-latest
-    environment:
-        name: Test
-        url: ${{ steps.deploy_staging.outputs.webapp-url }}
     steps:
     - uses: actions/checkout@v2
     - name: Setup .NET Core
@@ -25,32 +20,5 @@ jobs:
       with:
         include-prerelease: True
         dotnet-version: ${{ env.DOTNET_CORE_VERSION }}
-    - name: Restore
-      run: dotnet restore "${{ env.WORKING_DIRECTORY }}"
-    - name: Build
-      run: dotnet build "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} --no-restore
-    - uses: microsoft/playwright-github-action@v1
-    - name: Test
-      run: dotnet test "${{ env.WORKING_DIRECTORY }}" --no-build
-    - name: Publish
-      run: dotnet publish "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} --no-build --self-contained true --output "${{ env.AZURE_WEBAPP_PACKAGE_PATH }}"
-    - name: Deploy to Azure WebApp
-      uses: azure/webapps-deploy@v2
-      with:
-        app-name: ${{ env.AZURE_WEBAPP_NAME }}
-        package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
-        publish-profile: ${{ env.AZURE_WEBAPP_PUBLISH_PROFILE }}
-    - name: Publish Artifacts
-      uses: actions/upload-artifact@v1.0.0
-      with:
-        name: webapp
-        path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
-    - name: Azure Login
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
-    - name: Delete PR Slot
-      working-directory: src
-      run: |
-        az account set -s ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-        az webapp deployment slot delete --name AdvancedActions --resource-group .NETConf --slot "pr-${{ github.event.number }}"
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3

@@ -62,3 +62,35 @@ a, .btn-link {
     .blazor-error-boundary::after {
         content: "An error has occurred."
     }
+/*
+    div.gallery {
+        margin: 5px;
+        border: 1px solid #ccc;
+        float: left;
+        width: 180px;
+      }
+
+      div.gallery:hover {
+        border: 1px solid #777;
+      }
+
+      div.gallery img {
+        width: 100%;
+        height: auto;
+      }
+
+      div.desc {
+        padding: 15px;
+        text-align: center;
+      } */
+
+      #content {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    #content img {
+        width: 75%;
+        min-width: 100px;
+    }
+

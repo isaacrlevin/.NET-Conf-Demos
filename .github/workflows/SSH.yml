@@ -1,11 +1,6 @@
 name: SSH into Runner
 on:
-  push:
-    branches:
-    - main
-    paths:
-    - 'AdvancedActions/**'
-    - '.github/workflows/SSH.yml'
+  workflow_dispatch:
 
 env:
   AZURE_WEBAPP_NAME: AdvancedActions

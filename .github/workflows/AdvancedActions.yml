@@ -46,12 +46,3 @@ jobs:
       with:
         name: webapp
         path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
-    - name: Azure Login
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
-    - name: Delete PR Slot
-      working-directory: src
-      run: |
-        az account set -s ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-        az webapp deployment slot delete --name AdvancedActions --resource-group .NETConf --slot "pr-${{ github.event.number }}"

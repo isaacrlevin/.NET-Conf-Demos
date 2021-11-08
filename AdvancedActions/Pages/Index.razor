@@ -11,9 +11,9 @@
 {
     @foreach (Photo url in photos)
     {
-        <div class="gallery">
+        <div>
             <a href="@url.Url">
-                <img src="@url.Url" />
+                <img src="@url.Url" style="height:400px" />
             </a>
             <div class="desc">@url.Name</div>
         </div>

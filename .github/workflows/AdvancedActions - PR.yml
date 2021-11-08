@@ -51,7 +51,7 @@ jobs:
   DeployProd:
     needs: CreateStagingEnvironment:
     environment:
-      name: Deploy_Containers
+      name: Prod
       url: ${{ steps.deploy_staging.outputs.webapp-url }}
     name: Deploy Prod
     runs-on: ubuntu-latest

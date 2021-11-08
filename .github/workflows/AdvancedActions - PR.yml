@@ -22,7 +22,6 @@ jobs:
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
     - name: Copy Built Files, Create PR Slot and Get Publish Profile
-      working-directory: src
       run: |
         az version
 

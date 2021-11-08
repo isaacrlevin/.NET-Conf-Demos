@@ -8,23 +8,23 @@ on:
     - '.github/workflows/AdvancedActions - PR.yml'
 env:
   AZURE_WEBAPP_NAME: AdvancedActions
-  AZURE_WEBAPP_PACKAGE_PATH: AdvancedActions/publish
+  AZURE_WEBAPP_PACKAGE_PATH: AdvancedActions\publish
   AZURE_WEBAPP_PUBLISH_PROFILE: ${{ secrets.AdvancedActions_aa9e }}
   CONFIGURATION: Release
   DOTNET_CORE_VERSION: 6.0.x
   WORKING_DIRECTORY: AdvancedActions
 jobs:
   CreateStagingEnvironment:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
-    # - name: Azure Login
-    #   uses: azure/login@v1
-    #   with:
-    #     creds: ${{ secrets.AZURE_CREDENTIALS }}
-    # - name: Copy Built Files, Create PR Slot and Get Publish Profile
-    #   working-directory: src
-    #   run: |
-    #     az account set --subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    - name: Copy Built Files, Create PR Slot and Get Publish Profile
+      working-directory: src
+      run: |
+        az account set --subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
     - uses: actions/checkout@v2
     - name: Setup .NET Core

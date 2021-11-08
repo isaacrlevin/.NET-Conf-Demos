@@ -13,7 +13,7 @@ env:
   DOTNET_CORE_VERSION: 6.0.x
   WORKING_DIRECTORY: AdvancedActions
 jobs:
-  BuildTest:
+  BuildTestDeployAdvancedActions:
     runs-on: windows-latest
     environment:
         name: Test
@@ -29,11 +29,9 @@ jobs:
       run: dotnet restore "${{ env.WORKING_DIRECTORY }}"
     - name: Build
       run: dotnet build "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} --no-restore
-    # - uses: microsoft/playwright-github-action@v1
-    # - name: Trust Create
-    #   run: dotnet dev-certs https --trust
-    # - name: Test
-    #   run: dotnet test
+    - uses: microsoft/playwright-github-action@v1
+    - name: Test
+      run: dotnet test
     - name: Publish
       run: dotnet publish "${{ env.WORKING_DIRECTORY }}" -r win-x86 --configuration ${{ env.CONFIGURATION }} --self-contained true --output "${{ env.AZURE_WEBAPP_PACKAGE_PATH }}"
     - name: Deploy to Azure WebApp

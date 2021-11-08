@@ -77,7 +77,8 @@ namespace Tests
         [Fact]
         public async Task PageTitleIsIndex()
         {
-            var page = await driver.Browser.NewPageAsync();
+            await using var context = await driver.Browser.NewContextAsync(new() { IgnoreHTTPSErrors = true });
+            var page = await context.NewPageAsync();
             await page.GoToAsync(driver.BaseUrl);
 
             var title = await page.GetTitleAsync();

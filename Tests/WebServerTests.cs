@@ -83,7 +83,7 @@ namespace Tests
 
             var title = await page.GetTitleAsync();
 
-            Assert.Equal("Index", title);
+            Assert.Equal(".NET Community Heros", title);
         }
     }
 }

@@ -70,6 +70,19 @@ jobs:
         package: ${{ github.workspace }}/Publish
         publish-profile: ${{ env.SLOT_NAME }}
         slot-name: 'pr-${{ github.event.number }}'
+    - uses: tzkhan/pr-update-action@v1.1.1
+      with:
+        repo-token: "${{ secrets.GITHUB_TOKEN }}"
+        branch-regex: '.'
+        body-template: '<a href="https://advancedactions-pr-${{ github.event.number }}.azurewebsites.net/" target="_blank">Link to PR Site</a>'
+        replace-body: false
+        lowercase-branch: false
+        title-template: '.'
+        replace-title: false
+        title-prefix-space: false
+        uppercase-title: false
+        body-prefix-newline-count: 2
+        uppercase-body: false
 
   staging:
     runs-on: ubuntu-latest

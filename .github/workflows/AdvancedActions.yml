@@ -36,6 +36,11 @@ jobs:
       run: dotnet test
     - name: Publish
       run: dotnet publish "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} -r win-x86 --self-contained true --output "${{ env.AZURE_WEBAPP_PACKAGE_PATH }}"
+    - name: Publish Arifacts
+      uses: actions/upload-artifact@v2
+      with:
+        path: ${{ github.workspace }}\publish
+        name: Publish
 
   pr:
     runs-on: ubuntu-latest
@@ -53,11 +58,16 @@ jobs:
         az webapp deployment slot create --name AdvancedActions --resource-group .NETConf --slot "pr-${{ github.event.number }}"
         slot=$(az webapp deployment list-publishing-profiles --name AdvancedActions --resource-group .NETConf --subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }} --slot 'pr-${{ github.event.number }}' --xml --output tsv)
         echo "SLOTNAME=$slot" >> $GITHUB_ENV
+    - name: Download Publish Artifacts
+      uses: actions/download-artifact@v2
+      with:
+        name: Publish
+        path: ${{ github.workspace }}/Publish
     - name: 'Deploy App to PR Environment'
       uses: azure/webapps-deploy@v2
       with:
         app-name: ${{ env.AZURE_WEBAPP_NAME }}
-        package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+        package: ${{ github.workspace }}/Publish
         publish-profile: ${{ env.SLOT_NAME }}
         slot-name: 'pr-${{ github.event.number }}'
 
@@ -70,11 +80,16 @@ jobs:
         url: ${{ steps.deploy_staging.outputs.webapp-url }}
     steps:
     - run: echo "Deploy code to dev"
+    - name: Download Publish Artifacts
+      uses: actions/download-artifact@v2
+      with:
+        name: Publish
+        path: ${{ github.workspace }}/Publish
     - name: 'Deploy App to PR Environment'
       uses: azure/webapps-deploy@v2
       with:
         app-name: ${{ env.AZURE_WEBAPP_NAME }}
-        package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+        package: ${{ github.workspace }}/Publish
         publish-profile: ${{ env.AZURE_WEBAPP_STAGING_PUBLISH_PROFILE }}
         slot-name: 'staging'
 
@@ -86,9 +101,14 @@ jobs:
     name: Deploy Prod
     runs-on: ubuntu-latest
     steps:
+    - name: Download Publish Artifacts
+      uses: actions/download-artifact@v2
+      with:
+        name: Publish
+        path: ${{ github.workspace }}/Publish
     - name: 'Run Azure webapp deploy action using publish profile credentials'
       uses: azure/webapps-deploy@v2
       with:
         app-name: ${{ env.AZURE_WEBAPP_NAME }}
-        package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+        package: ${{ github.workspace }}/Publish
         publish-profile: ${{ env.AZURE_WEBAPP_PUBLISH_PROFILE }}

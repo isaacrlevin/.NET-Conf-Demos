@@ -51,7 +51,7 @@ jobs:
     - name: Log into Azure
       uses: azure/login@v1
       with:
-        creds: ${{ secrets.AZURE_SP }}
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
     - name: Create PR Slot and Get Publish Profile
       run: |
         az account set -s ${{ secrets.AZURE_SUBSCRIPTION_ID }}

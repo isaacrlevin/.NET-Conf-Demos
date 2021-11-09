@@ -10,21 +10,6 @@ using Xunit;
 
 namespace Tests
 {
-    public static class AreWe
-    {
-        public static bool InDockerOrBuildServer
-        {
-            get
-            {
-                string retVal = Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER");
-                string retVal2 = Environment.GetEnvironmentVariable("AGENT_NAME");
-                return (
-                     (String.Compare(retVal, Boolean.TrueString, ignoreCase: true) == 0)
-                     ||
-                     (String.IsNullOrWhiteSpace(retVal2) == false));
-            }
-        }
-    }
     public class WebServerDriver : IAsyncLifetime, IDisposable
     {
         private readonly IHost host;
@@ -49,17 +34,7 @@ namespace Tests
         public async Task InitializeAsync()
         {
             Playwright = await PlaywrightSharp.Playwright.CreateAsync();
-            if (AreWe.InDockerOrBuildServer)
-            {
-                Browser = await Playwright.Chromium.LaunchAsync();
-            }
-            else
-            {
-                Browser = await Playwright.Chromium.LaunchAsync(new LaunchOptions
-                {
-                    Headless = false
-                });
-            }
+            Browser = await Playwright.Chromium.LaunchAsync();
             await host.StartAsync();
         }
 

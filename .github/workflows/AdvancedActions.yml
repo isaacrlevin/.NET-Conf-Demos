@@ -1,11 +1,14 @@
 name: Create Staging Slot and Deploy
 on:
   push:
-    branches:
-    - main
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
     paths:
     - 'AdvancedActions/**'
     - '.github/workflows/AdvancedActions.yml'
+  workflow_dispatch:
+
 env:
   AZURE_WEBAPP_NAME: AdvancedActions
   AZURE_WEBAPP_PACKAGE_PATH: AdvancedActions/publish
@@ -15,9 +18,11 @@ env:
   DOTNET_CORE_VERSION: 6.0.x
   WORKING_DIRECTORY: AdvancedActions
 jobs:
-  DeployToStaging:
+
+  build:
     runs-on: ubuntu-latest
     steps:
+    - run: echo "Build and unit test our code"
     - uses: actions/checkout@v2
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1.8.0
@@ -31,7 +36,41 @@ jobs:
       run: dotnet test
     - name: Publish
       run: dotnet publish "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} -r win-x86 --self-contained true --output "${{ env.AZURE_WEBAPP_PACKAGE_PATH }}"
-    - name: 'Run Azure webapp deploy action using publish profile credentials'
+
+  pr:
+    runs-on: ubuntu-latest
+    if: github.event.number != null #  this only runs when in a PR
+    needs: [build]
+    steps:
+    - run: echo "Deploy code to PR#${{ github.event.number }}"
+    - name: Log into Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_SP }}
+    - name: Create PR Slot and Get Publish Profile
+      run: |
+        az account set -s ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        az webapp deployment slot create --name AdvancedActions --resource-group .NETConf --slot "pr-${{ github.event.number }}"
+        slot=$(az webapp deployment list-publishing-profiles --name AdvancedActions --resource-group .NETConf --subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }} --slot 'pr-${{ github.event.number }}' --xml --output tsv)
+        echo "SLOTNAME=$slot" >> $GITHUB_ENV
+    - name: 'Deploy App to PR Environment'
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: ${{ env.AZURE_WEBAPP_NAME }}
+        package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+        publish-profile: ${{ env.SLOT_NAME }}
+        slot-name: 'pr-${{ github.event.number }}'
+
+  staging:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' # only run on the main trunk
+    needs: [build]
+    environment:
+        name: Staging
+        url: ${{ steps.deploy_staging.outputs.webapp-url }}
+    steps:
+    - run: echo "Deploy code to dev"
+    - name: 'Deploy App to PR Environment'
       uses: azure/webapps-deploy@v2
       with:
         app-name: ${{ env.AZURE_WEBAPP_NAME }}
@@ -39,27 +78,14 @@ jobs:
         publish-profile: ${{ env.AZURE_WEBAPP_STAGING_PUBLISH_PROFILE }}
         slot-name: 'staging'
 
-  Deploy_Prod:
-    needs: DeployToStaging
+  prod:
+    needs: [staging]
     environment:
         name: Prod
         url: ${{ steps.deploy_staging.outputs.webapp-url }}
     name: Deploy Prod
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1.8.0
-      with:
-        dotnet-version: ${{ env.DOTNET_CORE_VERSION }}
-    - name: Restore
-      run: dotnet restore "${{ env.WORKING_DIRECTORY }}"
-    - name: Build
-      run: dotnet build "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} --no-restore
-    - name: Test
-      run: dotnet test
-    - name: Publish
-      run: dotnet publish "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} -r win-x86 --self-contained true --output "${{ env.AZURE_WEBAPP_PACKAGE_PATH }}"
     - name: 'Run Azure webapp deploy action using publish profile credentials'
       uses: azure/webapps-deploy@v2
       with:

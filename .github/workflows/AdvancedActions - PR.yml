@@ -80,5 +80,5 @@ jobs:
     - uses: tukasz/direct-merge-action@master
       with:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        source-branch: ${{ env.GITHUB_REF_NAME }} 
+        source-branch: ${{ env.GITHUB.REF}} 
         target-branch: main

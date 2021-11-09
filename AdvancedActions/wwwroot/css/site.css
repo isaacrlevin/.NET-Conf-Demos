@@ -67,7 +67,7 @@ a, .btn-link {
         padding: 15px;
         text-align: center;
         font-weight: 700
-      } 
+      }
 
       #content {
         display: flex;
@@ -77,5 +77,6 @@ a, .btn-link {
     #content img {
         width: 100%;
         min-width: 100px;
+        padding: 25px;
     }
 

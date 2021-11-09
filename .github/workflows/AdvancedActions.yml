@@ -1,17 +1,21 @@
-name: Build and deploy to AdvancedActions
+name: Create Staging Slot and Deploy
 on:
-  schedule:
-    # * is a special character in YAML so you have to quote this string
-    - cron:  '00 5 1 * *'
+  push:
+    branches:
+    - main
+    paths:
+    - 'AdvancedActions/**'
+    - '.github/workflows/AdvancedActions.yml'
 env:
   AZURE_WEBAPP_NAME: AdvancedActions
   AZURE_WEBAPP_PACKAGE_PATH: AdvancedActions/publish
   AZURE_WEBAPP_PUBLISH_PROFILE: ${{ secrets.AdvancedActions_aa9e }}
+  AZURE_WEBAPP_STAGING_PUBLISH_PROFILE: ${{ secrets.AdvancedActions_Staging }}
   CONFIGURATION: Release
   DOTNET_CORE_VERSION: 6.0.x
   WORKING_DIRECTORY: AdvancedActions
 jobs:
-  BuildTestDeployAdvancedActions:
+  DeployToStaging:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -19,5 +23,46 @@ jobs:
       uses: actions/setup-dotnet@v1.8.0
       with:
         dotnet-version: ${{ env.DOTNET_CORE_VERSION }}
-    - name: Setup tmate session
-      uses: mxschmitt/action-tmate@v3
+    - name: Restore
+      run: dotnet restore "${{ env.WORKING_DIRECTORY }}"
+    - name: Build
+      run: dotnet build "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} --no-restore
+    - name: Test
+      run: dotnet test
+    - name: Publish
+      run: dotnet publish "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} -r win-x86 --self-contained true --output "${{ env.AZURE_WEBAPP_PACKAGE_PATH }}"
+    - name: 'Run Azure webapp deploy action using publish profile credentials'
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: ${{ env.AZURE_WEBAPP_NAME }}
+        package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+        publish-profile: ${{ env.AZURE_WEBAPP_STAGING_PUBLISH_PROFILE }}
+        slot-name: 'staging'
+
+  Deploy_Prod:
+    needs: DeployToStaging
+    environment:
+        name: Prod
+        url: ${{ steps.deploy_staging.outputs.webapp-url }}
+    name: Deploy Prod
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1.8.0
+      with:
+        dotnet-version: ${{ env.DOTNET_CORE_VERSION }}
+    - name: Restore
+      run: dotnet restore "${{ env.WORKING_DIRECTORY }}"
+    - name: Build
+      run: dotnet build "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} --no-restore
+    - name: Test
+      run: dotnet test
+    - name: Publish
+      run: dotnet publish "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} -r win-x86 --self-contained true --output "${{ env.AZURE_WEBAPP_PACKAGE_PATH }}"
+    - name: 'Run Azure webapp deploy action using publish profile credentials'
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: ${{ env.AZURE_WEBAPP_NAME }}
+        package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+        publish-profile: ${{ env.AZURE_WEBAPP_PUBLISH_PROFILE }}

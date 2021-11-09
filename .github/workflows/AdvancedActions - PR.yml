@@ -47,35 +47,34 @@ jobs:
         package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
         publish-profile: ${{ env.SLOT_NAME }}
         slot-name: 'pr-${{ github.event.number }}'
+    - uses: tzkhan/pr-update-action@v1.1.1
+      with:
+        repo-token: "${{ secrets.GITHUB_TOKEN }}"
+        branch-regex: '.'
+        body-template: '<a href="https://advancedactions-private-pr-${{ github.event.number }}.azurewebsites.net/" target="_blank">Link to PR Site</a>'
+        replace-body: false
+        lowercase-branch: false
+        title-template: '.'
+        replace-title: false
+        title-prefix-space: false
+        uppercase-title: false
+        body-prefix-newline-count: 2
+        uppercase-body: false
 
-  Deploy_Prod:
+  Deploy_Staging:
     needs: CreateStagingEnvironment
     environment:
-        name: Prod
+        name: Staging
         url: ${{ steps.deploy_staging.outputs.webapp-url }}
-    name: Deploy Prod
+    name: Deploy Staging
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1.8.0
-      with:
-        dotnet-version: ${{ env.DOTNET_CORE_VERSION }}
-    - name: Restore
-      run: dotnet restore "${{ env.WORKING_DIRECTORY }}"
-    - name: Build
-      run: dotnet build "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} --no-restore
-    - name: Test
-      run: dotnet test
-    - name: Publish
-      run: dotnet publish "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} -r win-x86 --self-contained true --output "${{ env.AZURE_WEBAPP_PACKAGE_PATH }}"
-    - name: 'Run Azure webapp deploy action using publish profile credentials'
-      uses: azure/webapps-deploy@v2
-      with:
-        app-name: ${{ env.AZURE_WEBAPP_NAME }}
-        package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
-        publish-profile: ${{ env.AZURE_WEBAPP_PUBLISH_PROFILE }}
     - name: Delete PR Slot
       run: |
         az account set -s ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         az webapp deployment slot delete --name AdvancedActions --resource-group .NETConf --slot "pr-${{ github.event.number }}"
+    - uses: tukasz/direct-merge-action@master
+      with:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        source-branch: ${{ github.base_ref }}
+        target-branch: main

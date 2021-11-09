@@ -69,6 +69,10 @@ jobs:
     name: Deploy Staging
     runs-on: ubuntu-latest
     steps:
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
     - name: Delete PR Slot
       run: |
         az account set -s ${{ secrets.AZURE_SUBSCRIPTION_ID }}

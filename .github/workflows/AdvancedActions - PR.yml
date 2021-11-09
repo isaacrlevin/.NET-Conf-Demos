@@ -51,7 +51,7 @@ jobs:
       with:
         repo-token: "${{ secrets.GITHUB_TOKEN }}"
         branch-regex: '.'
-        body-template: '<a href="https://advancedactions-private-pr-${{ github.event.number }}.azurewebsites.net/" target="_blank">Link to PR Site</a>'
+        body-template: '<a href="https://advancedactions-pr-${{ github.event.number }}.azurewebsites.net/" target="_blank">Link to PR Site</a>'
         replace-body: false
         lowercase-branch: false
         title-template: '.'
@@ -66,7 +66,7 @@ jobs:
     environment:
         name: Staging
         url: ${{ steps.deploy_staging.outputs.webapp-url }}
-    name: Deploy Staging
+    name: Merge PR
     runs-on: ubuntu-latest
     steps:
     - name: Azure Login
@@ -80,5 +80,5 @@ jobs:
     - uses: tukasz/direct-merge-action@master
       with:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        source-branch: ${{ github.event.push.ref  }}
+        source-branch: ${{ github.event.pull_request.ref  }}
         target-branch: main

@@ -1,4 +1,4 @@
-name: Create Staging Slot and Deploy
+name: Build and Deploy Advanced Actions
 on:
   push:
     branches: [ main ]
@@ -111,7 +111,6 @@ jobs:
     environment:
         name: Prod
         url: ${{ steps.deploy_staging.outputs.webapp-url }}
-    name: Deploy Prod
     runs-on: ubuntu-latest
     steps:
     - name: Download Publish Artifacts

@@ -39,7 +39,7 @@ jobs:
     - name: Publish Arifacts
       uses: actions/upload-artifact@v2
       with:
-        path: ${{ github.workspace }}\publish
+        path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
         name: Publish
 
   pr:

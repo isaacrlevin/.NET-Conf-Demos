@@ -27,7 +27,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        string json = await ReadTextAsync("beans.json");
+        string json = await ReadTextAsync("heros.json");
         photos = JsonConvert.DeserializeObject<Photo[]>(json);
     }
 

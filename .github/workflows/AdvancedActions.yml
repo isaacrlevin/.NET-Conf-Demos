@@ -14,7 +14,8 @@ env:
   AZURE_WEBAPP_PUBLISH_PROFILE: ${{ secrets.AdvancedActions_aa9e }}
   AZURE_WEBAPP_STAGING_PUBLISH_PROFILE: ${{ secrets.AdvancedActions_Staging }}
   CONFIGURATION: Release
-  DOTNET_CORE_VERSION: 6.0.x
+  DOTNET_CORE_VERSION_APP: 6.0.x
+  DOTNET_CORE_VERSION_TOOL: 5.0.x
   WORKING_DIRECTORY: AdvancedActions
 jobs:
 
@@ -23,12 +24,14 @@ jobs:
     steps:
     - run: echo "Build and unit test our code"
     - uses: actions/checkout@v2
-    - name: Install Playwright Global Tool
-      run: dotnet tool install --global Microsoft.Playwright.CLI
-    - name: Setup .NET Core
+    - name: Setup .NET Core for App
       uses: actions/setup-dotnet@v1.8.0
       with:
-        dotnet-version: ${{ env.DOTNET_CORE_VERSION }}
+        dotnet-version: ${{ env.DOTNET_CORE_VERSION_APP }}
+    - name: Setup .NET Core for App
+      uses: actions/setup-dotnet@v1.8.0
+      with:
+        dotnet-version: ${{ env.DOTNET_CORE_VERSION_TOOL }}
     - name: Restore
       run: dotnet restore "${{ env.WORKING_DIRECTORY }}"
     - name: Build
@@ -37,12 +40,10 @@ jobs:
       uses: actions/setup-dotnet@v1.8.0
       with:
         dotnet-version: 5.0.x
+    - name: Install Playwright Global Tool
+      run: dotnet tool install --global Microsoft.Playwright.CLI
     - name: Install Playwright
       run: playwright install
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1.8.0
-      with:
-        dotnet-version: 6.0.x
     - name: Test
       run: dotnet test
     - name: Publish

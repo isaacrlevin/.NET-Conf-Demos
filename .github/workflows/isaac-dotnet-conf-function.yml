@@ -5,6 +5,7 @@ on:
     - main
     paths:
     - 'AzureFunction/**'
+  workflow_dispatch:
 env:
   AZURE_FUNCTIONAPP_NAME: isaac-dotnet-conf-function
   AZURE_FUNCTIONAPP_PACKAGE_PATH: ./published

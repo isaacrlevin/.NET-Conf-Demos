@@ -5,6 +5,8 @@ on:
     - main
     paths:
     - 'RecipeApi/**'
+  workflow_dispatch:
+
 env:
   AZURE_WEBAPP_NAME: RecipeApi-levin
   AZURE_WEBAPP_PACKAGE_PATH: RecipeApi\published

@@ -35,6 +35,10 @@ namespace Tests
         {
             Playwright = await PlaywrightSharp.Playwright.CreateAsync();
             Browser = await Playwright.Chromium.LaunchAsync();
+                // Browser = await Playwright.Chromium.LaunchAsync(new LaunchOptions
+                // {
+                //     Headless = false
+                // });
             await host.StartAsync();
         }
 

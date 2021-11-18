@@ -23,10 +23,8 @@ jobs:
     steps:
     - run: echo "Build and unit test our code"
     - uses: actions/checkout@v2
-    - name: Install Playwright
-      run:  |
-        dotnet tool install --global Microsoft.Playwright.CLI
-        playwright install
+    - name: Install Playwright Global Tool
+      run: dotnet tool install --global Microsoft.Playwright.CLI
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1.8.0
       with:
@@ -35,6 +33,8 @@ jobs:
       run: dotnet restore "${{ env.WORKING_DIRECTORY }}"
     - name: Build
       run: dotnet build "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} --no-restore
+    - name: Instal Playwright
+      run: playwright install
     - name: Test
       run: dotnet test
     - name: Publish

@@ -34,12 +34,12 @@ jobs:
         dotnet-version: ${{ env.DOTNET_CORE_VERSION_TOOL }}
     - name: Restore
       run: dotnet restore "${{ env.WORKING_DIRECTORY }}"
-    - name: Install Playwright Global Tool
-      run: dotnet tool install --global Microsoft.Playwright.CLI
+    # - name: Install Playwright Global Tool
+    #   run: dotnet tool install --global Microsoft.Playwright.CLI
     - name: Build
       run: dotnet build "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} --no-restore
-    - name: Install Playwright
-      run: playwright install
+    # - name: Install Playwright
+    #   run: playwright install
     - name: Test
       run: dotnet test
     - name: Publish

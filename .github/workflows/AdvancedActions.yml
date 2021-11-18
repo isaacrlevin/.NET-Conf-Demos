@@ -34,14 +34,10 @@ jobs:
         dotnet-version: ${{ env.DOTNET_CORE_VERSION_TOOL }}
     - name: Restore
       run: dotnet restore "${{ env.WORKING_DIRECTORY }}"
-    - name: Build
-      run: dotnet build "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} --no-restore
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1.8.0
-      with:
-        dotnet-version: 5.0.x
     - name: Install Playwright Global Tool
       run: dotnet tool install --global Microsoft.Playwright.CLI
+    - name: Build
+      run: dotnet build "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} --no-restore
     - name: Install Playwright
       run: playwright install
     - name: Test

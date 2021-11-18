@@ -1,7 +1,7 @@
 using AdvancedActions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
-using PlaywrightSharp;
+using Microsoft.Playwright;
 using System;
 using System.Net;
 using System.Net.Sockets;
@@ -13,18 +13,18 @@ namespace Tests
     public class WebServerDriver : IAsyncLifetime, IDisposable
     {
         private readonly IHost host;
-        private IPlaywright Playwright { get; set; }
-        public IBrowser Browser { get; private set; }
-        public string BaseUrl { get; } = $"https://localhost:{GetRandomUnusedPort()}";
+        private IPlaywright playwright { get; set; }
+        public IBrowser browser { get; private set; }
+        public string baseUrl { get; } = $"https://localhost:{GetRandomUnusedPort()}";
 
         public WebServerDriver()
         {
-            host = Program
+            host = AdvancedActions.Program
                 .CreateHostBuilder(null)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                    webBuilder.UseUrls(BaseUrl);
+                    webBuilder.UseUrls(baseUrl);
                 })
                 .ConfigureServices(configure =>
                 { })
@@ -33,8 +33,8 @@ namespace Tests
 
         public async Task InitializeAsync()
         {
-            Playwright = await PlaywrightSharp.Playwright.CreateAsync();
-            Browser = await Playwright.Chromium.LaunchAsync();
+            playwright = await Playwright.CreateAsync();
+            browser = await playwright.Chromium.LaunchAsync();
                 // Browser = await Playwright.Chromium.LaunchAsync(new LaunchOptions
                 // {
                 //     Headless = false
@@ -46,13 +46,13 @@ namespace Tests
         {
             await host.StopAsync();
             host?.Dispose();
-            Playwright?.Dispose();
+            playwright?.Dispose();
         }
 
         public void Dispose()
         {
             host?.Dispose();
-            Playwright?.Dispose();
+            playwright?.Dispose();
         }
 
         private static int GetRandomUnusedPort()
@@ -77,11 +77,11 @@ namespace Tests
         [Fact]
         public async Task PageTitleIsIndex()
         {
-            await using var context = await driver.Browser.NewContextAsync(new() { IgnoreHTTPSErrors = true });
+            await using var context = await driver.browser.NewContextAsync(new() { IgnoreHTTPSErrors = true });
             var page = await context.NewPageAsync();
-            await page.GoToAsync(driver.BaseUrl);
+            await page.GotoAsync(driver.baseUrl);
 
-            var title = await page.GetTitleAsync();
+            var title = await page.TitleAsync();
 
             Assert.Equal(".NET Community Heros", title);
         }

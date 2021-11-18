@@ -37,7 +37,7 @@ jobs:
     - name: Install Playwright Global Tool
       run: dotnet tool install --global Microsoft.Playwright.CLI
     - name: Build Test Project
-      run: dotnet build "AdvancedActions/Tests/Tests.csproj"
+      run: dotnet build "Tests/Tests.csproj"
     - name: Install Playwright
       run: playwright install
     - name: Test

@@ -2,9 +2,9 @@
 @using AdvancedActions.Data
 @using Newtonsoft.Json
 @using System.Text
-<PageTitle>.NET Community Heros</PageTitle>
+<PageTitle>Dogs</PageTitle>
 
-<h1>Hello Prague</h1>
+<h1>Look at these dogs!</h1>
 <center>
   <div id="content">
 @if (photos != null && photos.Length > 0)
@@ -13,7 +13,7 @@
     {
         <div>
             <a href="@url.Url">
-                <img src="@url.Url" style="height:400px" />
+                <img src="@url.Url" style="height:200px; width: 200px" />
             </a>
             <div class="desc">@url.Name</div>
         </div>
@@ -27,7 +27,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        string json = await ReadTextAsync("heros.json");
+        string json = await ReadTextAsync("cats.json");
         photos = JsonConvert.DeserializeObject<Photo[]>(json);
     }
 

@@ -11,7 +11,7 @@ on:
 env:
   AZURE_WEBAPP_NAME: AdvancedActions
   AZURE_WEBAPP_PACKAGE_PATH: AdvancedActions/publish
-  AZURE_WEBAPP_PUBLISH_PROFILE: ${{ secrets.AdvancedActions_aa9e }}
+  AZURE_WEBAPP_PUBLISH_PROFILE: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
   AZURE_WEBAPP_STAGING_PUBLISH_PROFILE: ${{ secrets.AdvancedActions_Staging }}
   CONFIGURATION: Release
   DOTNET_CORE_VERSION_APP: 6.0.x
